@@ -1,0 +1,9 @@
+services:
+  fastapi-worker:
+    build: .
+    container_name: image_processing_worker
+    ports:
+      - "8000:8000"
+    volumes:
+      # Maps your local folder to /app in the container for live reloading if needed
+      - .:/app
