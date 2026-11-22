@@ -1,9 +1,32 @@
 services:
-  fastapi-worker:
+  gateway:
     build: .
-    container_name: image_processing_worker
+    command: uvicorn server.gateway:app --host 0.0.0.0 --port 8000
     ports:
       - "8000:8000"
-    volumes:
-      # Maps your local folder to /app in the container for live reloading if needed
-      - .:/app
+    depends_on:
+      - worker1
+      - worker2
+      - worker3
+      - worker4
+
+  worker1: &worker_base
+    build: .
+    command: uvicorn server.worker:app --host 0.0.0.0 --port 8000
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+
+  worker2:
+    <<: *worker_base
+
+  worker3:
+    <<: *worker_base
+
+  worker4:
+    <<: *worker_base
+    deploy:
+      resources:
+        limits:
+          cpus: "0.2"
